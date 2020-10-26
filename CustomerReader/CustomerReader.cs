@@ -13,28 +13,31 @@ namespace CustomerReader
 {
     public class CustomerReader
     {
+        //Static variable to hold the file path.
         private static readonly string filePath = "D:\\PROJECTS\\CustomerReaderExercise\\doc\\";
         private List<Customer> customerList;
 
         /// <summary>
-        /// Main method
+        /// Main method.
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
             CustomerReader customerReader = new CustomerReader();
 
+            //Invoking methods to read data from various files (.csv, .xml, .json).
             customerReader.ReadCustomersCsv(filePath + "customers.csv");
             customerReader.ReadCustomersXml(filePath + "customers.xml");
             customerReader.ReadCustomersJson(filePath + "customers.json");
 
+            //Formatting the dispplay.
             Console.WriteLine("\n" + "Added this many customers: " + customerReader.GetCustomers().Count + "\n");
             customerReader.DisplayCustomers();
             Console.ReadLine();
         }
 
         /// <summary>
-        /// Public Constructor that initializes the Customer list object
+        /// Public Constructor that initializes the Customer list object<see cref="Customer"/>.
         /// </summary>
         public CustomerReader()
         {
@@ -42,9 +45,9 @@ namespace CustomerReader
         }
 
         /// <summary>
-        /// Gets the Customer list of records read from the .csv, .xml, .json files
+        /// Gets the Customer list of records read from the .csv, .xml, .json files.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of Customer object<see cref="Customer"/></returns>
         public List<Customer> GetCustomers()
         {
             return customerList;
@@ -58,51 +61,38 @@ namespace CustomerReader
         {
             try
             {
+                //Reading the file path and declaring a stream reader.
                 using (StreamReader streamReader = new StreamReader(File.Open(customerFilePath, FileMode.Open)))
                 {
-                    String line;
+                    //Initializing the stream reader to read the header line.
+                    String line = streamReader.ReadLine();
                     String[] attributes;
-                    line = streamReader.ReadLine();
-                    do
+
+                    //Checking if the header line is not empty to read next lines.
+                    if (line != null)
                     {
-                        attributes = line.Split(',');
-
-                        customerList.Add(new Customer
-                        {
-                            Email = attributes[0],
-                            Firstname = attributes[1],
-                            LastName = attributes[2],
-                            Phone = attributes[3],
-                            StreetAddress = attributes[4],
-                            City = attributes[5],
-                            State = attributes[6],
-                            ZipCode = attributes[7]
-                        });
+                        //Reading the line next to the header.
                         line = streamReader.ReadLine();
-                    } while (line != null);
+
+                        //Checking if the lines preceeding header line are empty.
+                        while (line != null)
+                        {
+                            attributes = line.Split(',');
+                            customerList.Add(new Customer
+                            {
+                                Email = attributes[0],
+                                FirstName = attributes[1],
+                                LastName = attributes[2],
+                                Phone = attributes[3],
+                                StreetAddress = attributes[4],
+                                City = attributes[5],
+                                State = attributes[6],
+                                ZipCode = attributes[7]
+                            });
+                            line = streamReader.ReadLine();
+                        }
+                    }
                 }
-
-                //StreamReader br = new StreamReader(File.Open(customer_file_path, FileMode.Open));
-                //String line = br.ReadLine();
-
-                //while (line != null)
-                //{
-                //    //String[] attributes = line.split(" , ");
-                //    String[] attributes = line.Split(',');
-
-                //    Customer customer = new Customer();
-                //    customer.email = attributes[0];
-                //    customer.fn = attributes[1];
-                //    customer.ln = attributes[2];
-                //    customer.phone = attributes[3];
-                //    customer.streetAddress = attributes[4];
-                //    customer.city = attributes[5];
-                //    customer.state = attributes[6];
-                //    customer.zipCode = attributes[7];
-
-                //    customers.Add(customer);
-                //    line = br.ReadLine();
-                //}
             }
             catch (IOException ex)
             {
@@ -120,31 +110,32 @@ namespace CustomerReader
             try
             {
                 var xmlDocument = new XmlDocument();
+                //Reading the file path.
                 xmlDocument.Load(customerFilePath);
 
-                XmlNodeList xmlNodeList = xmlDocument.GetElementsByTagName("Customers");
+                //Setting the tag name (Node) from which the data is to be read.
+                XmlNodeList xmlNodeList = xmlDocument.SelectNodes("/Customers/Customer");
 
-                for (int temp = 0; temp < xmlNodeList.Count; temp++)
+                //Looping the records.
+                foreach (XmlNode node in xmlNodeList)
                 {
-                    XmlNode xmlNode = xmlNodeList[temp];
-                    Console.WriteLine("\nCurrent Element :" + xmlNode.Name);
-                    if (xmlNode.NodeType == XmlNodeType.Element)
-                    {
-                        XmlElement eElement = (XmlElement)xmlNode;
-                        XmlElement aElement = (XmlElement)eElement.GetElementsByTagName("Address").Item(0);
+                    //Reading child nodes from each record.
+                    XmlElement eElement = (XmlElement)node;
+                    XmlElement aElement = (XmlElement)eElement.GetElementsByTagName("Address").Item(0);
 
-                        customerList.Add(new Customer
-                        {
-                            Email = eElement.GetElementsByTagName("Email").Item(temp).InnerText,
-                            Firstname = eElement.GetElementsByTagName("FirstName").Item(temp).InnerText,
-                            LastName = eElement.GetElementsByTagName("LastName").Item(temp).InnerText,
-                            Phone = eElement.GetElementsByTagName("PhoneNumber").Item(temp).InnerText,
-                            StreetAddress = aElement.GetElementsByTagName("StreetAddress").Item(temp).InnerText,
-                            City = aElement.GetElementsByTagName("City").Item(temp).InnerText,
-                            State = aElement.GetElementsByTagName("State").Item(temp).InnerText,
-                            ZipCode = aElement.GetElementsByTagName("ZipCode").Item(temp).InnerText
-                        });
-                    }
+                    //Assigning the node's inner text to a new Customer object property and adding it to the Customer List.
+                    customerList.Add(new Customer
+                    {
+                        Email = node["Email"].InnerText,
+                        FirstName = node["FirstName"].InnerText,
+                        LastName = node["LastName"].InnerText,
+                        Phone = node["PhoneNumber"].InnerText,
+
+                        StreetAddress = aElement.GetElementsByTagName("StreetAddress")[0].InnerText,
+                        City = aElement.GetElementsByTagName("City")[0].InnerText,
+                        State = aElement.GetElementsByTagName("State")[0].InnerText,
+                        ZipCode = aElement.GetElementsByTagName("ZipCode")[0].InnerText
+                    });
                 }
             }
             catch (Exception e)
@@ -152,32 +143,32 @@ namespace CustomerReader
                 Console.Write(e.StackTrace);
             }
         }
-
-
+        
         /// <summary>
         /// This method reads customers from a JSON file and puts them into the customers list.
         /// </summary>
         /// <param name="customerFilePath">customerFilePath gets a JSON file as input</param>
         public void ReadCustomersJson(String customersFilePath)
         {
-            //JsonTextReader reader = (new JsonTextReader(System.IO.File.OpenText(customersFilePath));
-            //JObject reader = JObject.Parse(File.ReadAllText(customersFilePath));
+            //Initializing the Json text reader.
             JsonTextReader reader = new JsonTextReader(System.IO.File.OpenText(customersFilePath));
-
             try
             {
+                //Reading content using the reader and storing in a Json array.
                 JArray jArray = (JArray)JToken.ReadFrom(reader);
-                //JArray a = (JArray)reader);
-                //
 
-                foreach (JObject jObj in jArray)
+                //Loop for accessing every Json object from the Json array.
+                foreach (JObject jObject in jArray)
                 {
-                    JObject record = jObj;
+                    //Reading parent Json objects.
+                    JObject record = jObject;
+                    //Reading child Json objects.
                     JObject address = (JObject)record["Address"];
+                    //Assigning the Json object values to a new Customer object property and adding it to the Customer List.
                     customerList.Add(new Customer
                     {
                         Email = (String)record["Email"],
-                        Firstname = (String)record["FirstName"],
+                        FirstName = (String)record["FirstName"],
                         LastName = (String)record["LastName"],
                         Phone = (String)record["PhoneNumber"],
                         StreetAddress = (String)address["StreetAddress"],
@@ -207,18 +198,20 @@ namespace CustomerReader
         /// <param name="customerFilePath">customerFilePath gets a CSV file as input</param>
         public void DisplayCustomers()
         {
+            //Looping Customer list.
             foreach (Customer customer in this.customerList)
             {
+                //Initializing a string variable and building it with values.
                 String customerString = "";
                 customerString += "Email: " + customer.Email + "\n";
-                customerString += "First Name: " + customer.Firstname + "\n";
+                customerString += "First Name: " + customer.FirstName + "\n";
                 customerString += "Last Name: " + customer.LastName + "\n";
                 customerString += "Phone Number: " + customer.Phone + "\n";
                 customerString += "Street Address: " + customer.StreetAddress + "\n";
                 customerString += "City: " + customer.City + "\n";
                 customerString += "State: " + customer.State + "\n";
                 customerString += "Zip Code: " + customer.ZipCode + "\n";
-
+                //Printing the variable.
                 Console.WriteLine(customerString);
             }
         }

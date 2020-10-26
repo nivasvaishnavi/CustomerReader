@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace CustomerReader.Model
 {
+    /// <summary>
+    /// Address model class.
+    /// </summary>
     public class Address
     {
         public String StreetAddress;
@@ -14,6 +17,9 @@ namespace CustomerReader.Model
         public String ZipCode;
     }
 
+    /// <summary>
+    /// Customer model class with Address model class' properties inherited.
+    /// </summary>
     public class Customer : Address
     {
         public String FirstName;

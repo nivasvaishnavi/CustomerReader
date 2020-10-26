@@ -1,33 +1,17 @@
-# Introduction 
-This program was built on the following requirements:
 
-* Create a system that will instantiate customer objects from files. Samples of these files are included in the doc folder.
-  * Read from CSV files with headers.
-  * Read from XML files.
-  * Read from JSON files.
-* The program should output how many customers were made.
-  * Sample: "Added this many customers: 6"
-* The program should output an inspection of each customer.
-  * The output should contain the following customer data:
-    * Email Address (all lower case).
-    * First Name (first letter capitalized).
-    * Last Name (first letter capitalized).
-    * Full Name (first letter of first and last capitalized).
-    * Street Address (first letter of each word capitalized).
-    * City (first letter capitalized).
-    * State (All caps)
-    * Zip Code
-
-# Your task
-Re-evaluate the architecture, design, and implementation of the solution:
-*	You have full control and are free to re-design it from the ground up. Utilize what you consider to be best practices and architecture/design principles and patterns.
-  * If something doesn't make sense to you, feel free to change it.
-*	Make sure the code is ready for a production environment.
-*	Ensure that the code is easily readable and maintanable.
-*	Make sure there are no bugs or errors in the code. 
-
-# Send us your solution
-Please clone this repository and complete your solution in the clone. Do not push to this repository.
-Email a link to your solution to richard.garabedian@activatords.com CC michael.desanty@activatords.com and matt.murrell@activatords.com
-
-Please include a text document with a high level list of the changes you made. 
+# Changes made
+Here are the changes made to the code after re-evaluating the architecture, design, and implementation of the solution:
+*	Followed commenting conventions before every methods, classes for better understandability.
+*	Followed Naming policies for Identifiers, Methods, Classes & Properties.
+*	Followed Layout conventions for easy readability.
+*	Moved static variable declaration to the top of the class.
+*	Included summary for all the methods and classes.
+*	Stored file paths in a static readonly string variable for generic accessibility.
+*	Reduced number of lines of codes.
+*	Made code corrections inside the method that reads data from an XML File.
+*	Reduced number of code lines inside the method that reads data from a JSON file.
+*	Dymanic object creation and assigning done to avoided the memory usage.
+*	Renamed the file 'Program.cs' to 'CustomerReader.cs' and declared public
+*	Renamed the file 'Class1.cs' as 'CustomerModel.cs' and moved inside the folder 'Model'.
+*	Code Understandability, readability and maintanability ensured and is ready for a production environment.
+*	Latest code is pushed in a repository of a seperate git account without making changes to the existing source.
